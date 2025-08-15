@@ -39,16 +39,15 @@ Object.keys(db).forEach(modelName => {
 
 // Explicit associations
 const {
-  User, Student, Staff, Material, ChatSupport, TeacherClass, Class, GradeLevel, Subject, Submission, Attendance, Payment, Announcement, Grade
+  User, Student, Teacher, Material, ChatSupport, TeacherClass, Class, GradeLevel, Subject, Submission, Attendance, Payment, Announcement, Grade
 } = db;
 
 // User Associations
 User.hasOne(Student, { foreignKey: 'id' });
-User.hasOne(Staff, { foreignKey: 'id' });
+// REMOVED: User.hasOne(Staff, { foreignKey: 'id' });
 User.hasMany(Student, { foreignKey: 'parent_id', as: 'children' });
-User.hasMany(Material, { foreignKey: 'teacher_id' });
-User.hasMany(ChatSupport, { foreignKey: 'sender_id' });
-User.belongsToMany(Class, { through: TeacherClass, foreignKey: 'teacher_id' });
+// REMOVED incorrect: User.hasMany(Material, { foreignKey: 'teacher_id' });
+// REMOVED incorrect: User.belongsToMany(Class, { through: TeacherClass, foreignKey: 'teacher_id' });
 
 // Student Associations
 Student.belongsTo(User, { foreignKey: 'id' });
@@ -60,10 +59,12 @@ Student.hasMany(Attendance);
 Student.hasMany(Grade);
 Student.hasMany(Payment);
 
-// Staff Associations
-Staff.belongsTo(User, { foreignKey: 'id' });
-Staff.hasMany(Announcement);
-Staff.hasMany(ChatSupport, { foreignKey: 'responser_id' });
+// REMOVED Staff Associations; replaced with Teacher associations if needed:
+Teacher.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+Teacher.hasMany(Announcement, { foreignKey: 'created_by', as: 'announcements' });
+Teacher.hasMany(ChatSupport, { foreignKey: 'responser_id', as: 'handledChats' });
+Teacher.hasMany(Material, { foreignKey: 'teacher_id', as: 'materials' }); // added
+Teacher.belongsToMany(Class, { through: TeacherClass, foreignKey: 'teacher_id', as: 'classes' }); // added
 
 // GradeLevel and Subject
 GradeLevel.hasMany(Subject);
@@ -72,7 +73,7 @@ Subject.hasMany(Material);
 
 // Material
 Material.belongsTo(Subject);
-Material.belongsTo(User, { foreignKey: 'teacher_id' });
+Material.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
 Material.hasMany(Submission);
 
 // Submission
@@ -81,7 +82,8 @@ Submission.belongsTo(Material);
 
 // Class
 Class.hasMany(Student);
-Class.belongsToMany(User, { through: TeacherClass, foreignKey: 'class_id' });
+// REMOVED incorrect: Class.belongsToMany(User, { through: TeacherClass, foreignKey: 'class_id' });
+Class.belongsToMany(Teacher, { through: TeacherClass, foreignKey: 'class_id', as: 'teachers' }); // added
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
