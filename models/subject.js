@@ -18,6 +18,8 @@ export default (sequelize) => {
       type: DataTypes.UUID,
       allowNull: false,
       references: { model: 'GradeLevels', key: 'id' },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
   }, {
     sequelize,

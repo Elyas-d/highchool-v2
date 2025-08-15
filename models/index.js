@@ -37,6 +37,52 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+// Explicit associations
+const {
+  User, Student, Staff, Material, ChatSupport, TeacherClass, Class, GradeLevel, Subject, Submission, Attendance, Payment, Announcement, Grade
+} = db;
+
+// User Associations
+User.hasOne(Student, { foreignKey: 'id' });
+User.hasOne(Staff, { foreignKey: 'id' });
+User.hasMany(Student, { foreignKey: 'parent_id', as: 'children' });
+User.hasMany(Material, { foreignKey: 'teacher_id' });
+User.hasMany(ChatSupport, { foreignKey: 'sender_id' });
+User.belongsToMany(Class, { through: TeacherClass, foreignKey: 'teacher_id' });
+
+// Student Associations
+Student.belongsTo(User, { foreignKey: 'id' });
+Student.belongsTo(User, { foreignKey: 'parent_id', as: 'parent' });
+Student.belongsTo(GradeLevel);
+Student.belongsTo(Class);
+Student.hasMany(Submission);
+Student.hasMany(Attendance);
+Student.hasMany(Grade);
+Student.hasMany(Payment);
+
+// Staff Associations
+Staff.belongsTo(User, { foreignKey: 'id' });
+Staff.hasMany(Announcement);
+Staff.hasMany(ChatSupport, { foreignKey: 'responser_id' });
+
+// GradeLevel and Subject
+GradeLevel.hasMany(Subject);
+Subject.belongsTo(GradeLevel);
+Subject.hasMany(Material);
+
+// Material
+Material.belongsTo(Subject);
+Material.belongsTo(User, { foreignKey: 'teacher_id' });
+Material.hasMany(Submission);
+
+// Submission
+Submission.belongsTo(Student);
+Submission.belongsTo(Material);
+
+// Class
+Class.hasMany(Student);
+Class.belongsToMany(User, { through: TeacherClass, foreignKey: 'class_id' });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

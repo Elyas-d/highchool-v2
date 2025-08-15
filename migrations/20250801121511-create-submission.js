@@ -3,51 +3,66 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Submissions', {
+    await queryInterface.createTable('submissions', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('(UUID())'),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
+      assignment_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'assignments',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+      },
       student_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Students',
+          model: 'students',
           key: 'id',
         },
         onDelete: 'CASCADE',
       },
-      material_id: {
-        type: Sequelize.UUID,
+      file_path: {
+        type: Sequelize.STRING(500),
+        allowNull: true,
+      },
+      notes: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      submitted_at: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         allowNull: false,
-        references: {
-          model: 'Materials',
-          key: 'id',
-        },
-        onDelete: 'CASCADE',
       },
-      file_url: {
-        type: Sequelize.STRING,
-      },
-      status: {
-        type: Sequelize.STRING,
+      graded_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
       score: {
-        type: Sequelize.FLOAT,
+        type: Sequelize.DECIMAL(5,2),
+        allowNull: true,
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
+      feedback: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
+    });
+    
+    // Add unique constraint for assignment_id, student_id
+    await queryInterface.addIndex('submissions', {
+      fields: ['assignment_id', 'student_id'],
+      unique: true,
+      name: 'unique_submission'
     });
   },
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Submissions');
+    await queryInterface.dropTable('submissions');
   }
 };

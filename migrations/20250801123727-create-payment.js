@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('assignments', {
+    await queryInterface.createTable('resources', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -18,34 +18,37 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      file_path: {
+        type: Sequelize.STRING(500),
+        allowNull: false,
+      },
+      file_type: {
+        type: Sequelize.STRING(50),
+        allowNull: true,
+      },
+      file_size: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       class_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'classes',
           key: 'id',
         },
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       subject_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'subjects',
           key: 'id',
         },
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
       },
-      due_date: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      max_score: {
-        type: Sequelize.DECIMAL(5,2),
-        defaultValue: 100,
-        allowNull: true,
-      },
-      created_by: {
+      uploaded_by: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -66,8 +69,7 @@ module.exports = {
       },
     });
   },
-
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('assignments');
+    await queryInterface.dropTable('resources');
   }
 };

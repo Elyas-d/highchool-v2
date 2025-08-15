@@ -3,50 +3,69 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Students', {
+    await queryInterface.createTable('students', {
       id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
         allowNull: false,
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
-          model: 'Users',
+          model: 'users',
           key: 'id',
         },
         onDelete: 'CASCADE',
       },
-      grade_level_id: {
-        type: Sequelize.UUID,
+      roll_number: {
+        type: Sequelize.STRING(50),
+        unique: true,
         allowNull: false,
-        references: {
-          model: 'GradeLevels',
-          key: 'id',
-        },
-        onDelete: 'SET NULL',
       },
-      class_id: {
-        type: Sequelize.UUID,
+      grade: {
+        type: Sequelize.STRING(20),
+        allowNull: false,
+      },
+      class: {
+        type: Sequelize.STRING(20),
         allowNull: false,
       },
       parent_id: {
-        type: Sequelize.UUID,
-        allowNull: false,
+        type: Sequelize.INTEGER,
+        allowNull: true,
         references: {
-          model: 'Users',
+          model: 'users',
           key: 'id',
         },
         onDelete: 'SET NULL',
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
+      date_of_birth: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
       },
-      updatedAt: {
-        allowNull: false,
+      gender: {
+        type: Sequelize.ENUM('male', 'female', 'other'),
+        allowNull: true,
+      },
+      emergency_contact: {
+        type: Sequelize.STRING(20),
+        allowNull: true,
+      },
+      created_at: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false,
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        allowNull: false,
       },
     });
   },
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Students');
+    await queryInterface.dropTable('students');
   }
 };

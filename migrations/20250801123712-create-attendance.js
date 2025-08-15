@@ -3,20 +3,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('assignments', {
+    await queryInterface.createTable('attendance', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
-      title: {
-        type: Sequelize.STRING(255),
+      student_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: true,
+        references: {
+          model: 'students',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
       },
       class_id: {
         type: Sequelize.INTEGER,
@@ -27,25 +28,19 @@ module.exports = {
         },
         onDelete: 'CASCADE',
       },
-      subject_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'subjects',
-          key: 'id',
-        },
-        onDelete: 'CASCADE',
-      },
-      due_date: {
-        type: Sequelize.DATE,
+      date: {
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
-      max_score: {
-        type: Sequelize.DECIMAL(5,2),
-        defaultValue: 100,
+      status: {
+        type: Sequelize.ENUM('present', 'absent', 'late'),
+        allowNull: false,
+      },
+      notes: {
+        type: Sequelize.TEXT,
         allowNull: true,
       },
-      created_by: {
+      marked_by: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -65,9 +60,16 @@ module.exports = {
         allowNull: false,
       },
     });
+    
+    // Add unique constraint for student_id, class_id, date
+    await queryInterface.addIndex('attendance', {
+      fields: ['student_id', 'class_id', 'date'],
+      unique: true,
+      name: 'unique_attendance'
+    });
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('assignments');
+    await queryInterface.dropTable('attendance');
   }
 };

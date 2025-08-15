@@ -9,8 +9,11 @@ export default (sequelize) => {
   Staff.init({
     id: {
       type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       references: { model: 'Users', key: 'id' },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
     department: DataTypes.STRING,
     position: DataTypes.STRING,

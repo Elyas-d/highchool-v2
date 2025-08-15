@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('teachers', {
+    await queryInterface.createTable('notifications', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -19,38 +19,31 @@ module.exports = {
         },
         onDelete: 'CASCADE',
       },
-      employee_id: {
-        type: Sequelize.STRING(50),
-        unique: true,
+      title: {
+        type: Sequelize.STRING(255),
         allowNull: false,
       },
-      subject: {
-        type: Sequelize.STRING(100),
-        allowNull: true,
+      message: {
+        type: Sequelize.TEXT,
+        allowNull: false,
       },
-      qualification: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
+      type: {
+        type: Sequelize.STRING(50),
+        allowNull: false,
       },
-      experience_years: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        allowNull: true,
+      read_status: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
       },
       created_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         allowNull: false,
       },
-      updated_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-        allowNull: false,
-      },
     });
   },
-
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('teachers');
+    await queryInterface.dropTable('notifications');
   }
 };

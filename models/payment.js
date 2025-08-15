@@ -1,12 +1,12 @@
 import { Model, DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  class Grade extends Model {
+  class Payment extends Model {
     static associate(models) {
-      Grade.belongsTo(models.Student, { foreignKey: 'student_id', as: 'student' });
+      Payment.belongsTo(models.Student, { foreignKey: 'student_id', as: 'student' });
     }
   }
-  Grade.init({
+  Payment.init({
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -19,13 +19,16 @@ export default (sequelize) => {
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
-    score: DataTypes.FLOAT,
-    term: DataTypes.STRING,
+    amount: DataTypes.FLOAT,
+    method: DataTypes.STRING,
+    purpose: DataTypes.STRING,
+    status: DataTypes.STRING,
+    reference_number: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'Grade',
+    modelName: 'Payment',
     timestamps: true,
-    tableName: 'Grades',
+    tableName: 'Payments',
   });
-  return Grade;
+  return Payment;
 }; 

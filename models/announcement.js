@@ -1,31 +1,31 @@
 import { Model, DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  class Grade extends Model {
+  class Announcement extends Model {
     static associate(models) {
-      Grade.belongsTo(models.Student, { foreignKey: 'student_id', as: 'student' });
+      Announcement.belongsTo(models.Staff, { foreignKey: 'staff_id', as: 'staff' });
     }
   }
-  Grade.init({
+  Announcement.init({
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    student_id: {
+    title: DataTypes.STRING,
+    content: DataTypes.TEXT,
+    staff_id: {
       type: DataTypes.UUID,
       allowNull: false,
-      references: { model: 'Students', key: 'id' },
+      references: { model: 'Staffs', key: 'id' },
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
-    score: DataTypes.FLOAT,
-    term: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'Grade',
+    modelName: 'Announcement',
     timestamps: true,
-    tableName: 'Grades',
+    tableName: 'Announcements',
   });
-  return Grade;
+  return Announcement;
 }; 

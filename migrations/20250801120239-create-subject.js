@@ -3,41 +3,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Subjects', {
+    await queryInterface.createTable('subjects', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('(UUID())'),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
       name: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(100),
+        allowNull: false,
+      },
+      code: {
+        type: Sequelize.STRING(20),
+        unique: true,
         allowNull: false,
       },
       description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
-      grade_level_id: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: 'GradeLevels',
-          key: 'id',
-        },
-        onDelete: 'CASCADE',
-      },
-      createdAt: {
-        allowNull: false,
+      created_at: {
         type: Sequelize.DATE,
-      },
-      updatedAt: {
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         allowNull: false,
+      },
+      updated_at: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        allowNull: false,
       },
     });
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Subjects');
+    await queryInterface.dropTable('subjects');
   }
 };

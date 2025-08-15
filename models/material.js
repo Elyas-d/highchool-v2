@@ -21,11 +21,15 @@ export default (sequelize) => {
       type: DataTypes.UUID,
       allowNull: false,
       references: { model: 'Subjects', key: 'id' },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
     teacher_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: { model: 'Users', key: 'id' },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
   }, {
     sequelize,

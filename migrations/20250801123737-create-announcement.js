@@ -3,42 +3,48 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('announcements', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
-      name: {
+      title: {
         type: Sequelize.STRING(255),
         allowNull: false,
       },
-      email: {
-        type: Sequelize.STRING(255),
-        unique: true,
-        allowNull: false,
-      },
-      password: {
-        type: Sequelize.STRING(255),
-        allowNull: false,
-      },
-      role: {
-        type: Sequelize.ENUM('admin', 'teacher', 'parent', 'student'),
-        allowNull: false,
-        defaultValue: 'student',
-      },
-      profile_image: {
-        type: Sequelize.STRING(500),
-        allowNull: true,
-      },
-      phone: {
-        type: Sequelize.STRING(20),
-        allowNull: true,
-      },
-      address: {
+      content: {
         type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      type: {
+        type: Sequelize.ENUM('general', 'class', 'exam', 'event'),
+        allowNull: false,
+        defaultValue: 'general',
+      },
+      target_audience: {
+        type: Sequelize.ENUM('all', 'students', 'parents', 'teachers', 'admins'),
+        allowNull: false,
+        defaultValue: 'all',
+      },
+      class_id: {
+        type: Sequelize.INTEGER,
         allowNull: true,
+        references: {
+          model: 'classes',
+          key: 'id',
+        },
+        onDelete: 'SET NULL',
+      },
+      created_by: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
       },
       created_at: {
         type: Sequelize.DATE,
@@ -52,7 +58,8 @@ module.exports = {
       },
     });
   },
+
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('announcements');
   }
 };
