@@ -1,27 +1,38 @@
 import { Model, DataTypes } from 'sequelize';
 
+// NOTE: This file now defines the Teacher model (was Staff). You may rename the file to teacher.js.
 export default (sequelize) => {
-  class Staff extends Model {
+  class Teacher extends Model {
     static associate(models) {
-      Staff.belongsTo(models.User, { foreignKey: 'id', as: 'user' });
+      Teacher.belongsTo(models.User, { foreignKey: 'user_id', as: 'user', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+      Teacher.hasMany(models.Class, { foreignKey: 'teacher_id', as: 'classes' });
     }
   }
-  Staff.init({
+  Teacher.init({
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
-      references: { model: 'Users', key: 'id' },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
     },
-    department: DataTypes.STRING,
-    position: DataTypes.STRING,
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    employee_id: {
+      type: DataTypes.STRING(50),
+      unique: true,
+      allowNull: false,
+    },
+    subject: DataTypes.STRING(100),
+    qualification: DataTypes.STRING(255),
+    experience_years: DataTypes.INTEGER,
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE,
   }, {
     sequelize,
-    modelName: 'Staff',
-    timestamps: true,
-    tableName: 'Staffs',
+    modelName: 'Teacher',
+    tableName: 'teachers',
+    timestamps: false,
   });
-  return Staff;
-}; 
+  return Teacher;
+};

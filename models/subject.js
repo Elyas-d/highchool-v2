@@ -3,29 +3,34 @@ import { Model, DataTypes } from 'sequelize';
 export default (sequelize) => {
   class Subject extends Model {
     static associate(models) {
-      Subject.belongsTo(models.GradeLevel, { foreignKey: 'grade_level_id', as: 'gradeLevel' });
+      Subject.hasMany(models.Assignment, { foreignKey: 'subject_id', as: 'assignments' });
+      Subject.hasMany(models.Grade, { foreignKey: 'subject_id', as: 'grades' });
+      Subject.hasMany(models.Resource, { foreignKey: 'subject_id', as: 'resources', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     }
   }
   Subject.init({
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
     },
-    name: DataTypes.STRING,
-    description: DataTypes.STRING,
-    grade_level_id: {
-      type: DataTypes.UUID,
+    name: {
+      type: DataTypes.STRING(100),
       allowNull: false,
-      references: { model: 'GradeLevels', key: 'id' },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
     },
+    code: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: true,
+    },
+    description: DataTypes.TEXT,
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Subject',
-    timestamps: true,
-    tableName: 'Subjects',
+    tableName: 'subjects',
+    timestamps: false,
   });
   return Subject;
-}; 
+};
